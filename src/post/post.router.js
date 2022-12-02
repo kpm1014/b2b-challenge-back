@@ -2,8 +2,8 @@ const express = require("express");
 const Post = require("./post.entity");
 const validateSchema = require("../infra/http/ajv");
 
-const elastic = require('elasticsearch');
-const bodyParser = require('body-parser').json();
+// const elastic = require('elasticsearch');
+// const bodyParser = require('body-parser').json();
 
 
 function createPostsRouter(managePostsUsecase) {
@@ -14,9 +14,9 @@ function createPostsRouter(managePostsUsecase) {
     res.status(200).send(posts);
   });
 
-  router.get("/api/posts/:id", async (req, res) => {
-    const id = req.params.id;
-    const post = await managePostsUsecase.getPost(id);
+  router.get("/api/posts/:postId", async (req, res) => {
+    const postId = req.params.postId;
+    const post = await managePostsUsecase.getPost(postId);
 
     if (post) {
       res.status(200).send(post);
@@ -36,17 +36,17 @@ function createPostsRouter(managePostsUsecase) {
     }
   });
 
-  router.put("/api/posts/:id", async (req, res) => {
+  router.put("/api/posts/:postId", async (req, res) => {
     validation = validateSchema(Post.schema, req);
 
     if (validation === true) {
-      const id = req.params.id;
+      const postId = req.params.postId;
 
-      const postFound = await managePostsUsecase.getPost(id);
+      const postFound = await managePostsUsecase.getPost(postId);
 
       if (postFound) {
         const post = await managePostsUsecase.updatePost(
-          id,
+          postId,
           req.body
         );
         res.status(200).send(post);
@@ -58,14 +58,14 @@ function createPostsRouter(managePostsUsecase) {
     }
   });
 
-  router.delete("/api/posts/:id", async (req, res) => {
-    const id = req.params.id;
+  router.delete("/api/posts/:postId", async (req, res) => {
+    const postId = req.params.postId;
 
-    const postFound = await managePostsUsecase.getPost(id);
+    const postFound = await managePostsUsecase.getPost(postId);
 
     if (postFound) {
-      await managePostsUsecase.deletePost(id);
-      res.status(200).send(`Deleted ${id}`);
+      await managePostsUsecase.deletePost(postId);
+      res.status(200).send(`Deleted ${postId}`);
     } else {
       res.status(404).send(`Post not found`);
     }

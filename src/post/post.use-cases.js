@@ -1,5 +1,4 @@
 const Post = require("./post.entity");
-
 class ManagePostUsecase {
   constructor(postRepository) {
     this.postRepository = postRepository;
@@ -9,20 +8,43 @@ class ManagePostUsecase {
     return await this.postRepository.getPosts();
   }
 
-  async getPost(id) {
-    return await this.postRepository.getPost(id);
+  async getPost(postId) {
+    return await this.postRepository.getPost(postId);
   }
 
-  async createPost(data) {
-    return;
+  async createPost(newPost) {
+    // if (!author) {
+    //   throw new Error("Author not found");
+    // }
+
+    const post = new Post(
+      undefined,
+      newPost.title,
+      newPost.description,
+      newPost.author
+    );
+    const postId = await this.postRepository.createPost(post);
+    post.postId = postId;
+
+    return post;
   }
 
-  async updatePost(id, data) {
-    return;
+  async updatePost(postId, postToUpdate) {
+    const instance = this.postRepository.getPost(postId);
+
+    if (!instance) {
+      throw new Error("Post not found");
+    }
+    // Update post field values
+    Object.assign(instance, postToUpdate);
+
+    await this.postRepository.updatePost(instance);
+
+    return instance;
   }
 
-  async deletePost(id) {
-    await this.postRepository.deletePost(id);
+  async deletePost(postId) {
+    await this.postRepository.deletePost(postId);
   }
 }
 

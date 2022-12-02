@@ -1,7 +1,6 @@
 const express = require("express");
 const User = require("./user.entity");
 const validateSchema = require("../infra/http/ajv");
-const { default: validation } = require("ajv/dist/vocabularies/validation");
 
 function createUsersRouter(manageUsersUsecase) {
   const router = express.Router();
